@@ -1,2 +1,3 @@
 # Artificial-Intelligence-and-Block-Chain
-course
+
+_Professor: 이주현 & 서승현_
