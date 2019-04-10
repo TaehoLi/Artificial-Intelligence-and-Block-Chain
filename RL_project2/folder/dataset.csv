@@ -1,0 +1,275 @@
+channel_number,channel_name,broadcasting_field
+1,현대홈쇼핑,homeshopping
+2,스크린(Screen),movie
+3,씨네프(CineF),movie
+4,디원(D.one),drama
+5,실버티브이(Silver TV),oldman
+6,엠비씨 에브리원(MBC Every1),variety
+7,니켈로디언(Nickelodeon),kid
+8,SBS MTV,music
+9,SBS fun E,drama
+10,SBS Plus,fun
+11,SBS Sports,sports
+12,엠비씨 퀸(MBC QUEEN),culture
+13,엠비씨 뮤직(MBC MUSIC),music
+14,엠비씨 드라마넷(MBC Dramanet),fun
+15,e채널,variety
+16,국방TV,national_defense
+17,헬스케이( HealthK),health
+18,ATV(한국농림수산방송),information
+19,싱글티브이,culture
+20,PLAYBOY TV(플레이보이TV),adult
+21,Billiards TV(빌리어즈티비),sports
+22,부동산토마토(Rtomato),information
+23,카툰네트워크(Cartoon Network),animation
+24,하이라이트TV,variety
+25,농업경제방송,economy
+26,National Geographic Channel,refinement
+27,투니버스(Tooniverse),animation
+28,바둑TV,refinement
+29,오씨엔 시리즈(OCN series),movie
+30,SUPER ACTION,movie
+31,OCN,movie
+32,채널씨지브이(CH.CGV),movie
+33,중화TV,culture
+34,엠머니(Mmoney),information
+35,On Style,woman
+36,올리브네트워크(O'live Network),woman
+37,엑스티엠스퀘어(XTM²),variety
+38,XTM,variety
+39,스토리온(Story On),variety
+40,방송대학TV(OUN),information
+41,CJ오쇼핑,homeshopping
+42,CMTV,music
+43,KBS Kids,animation
+44,KBS Prime,culture
+45,KBS W,woman
+46,KBS Joy,variety
+47,KBS N Sports,sports
+48,KBS Drama,drama
+49,티브이비코리아(TVB KOREA),drama
+50,리얼TV(Real TV),culture
+51,법률TV,information
+52,연예TV(ETN),culture
+53,CTS기독교TV,religion
+54,Mplex,movie
+55,에듀키즈티브이 (Edu Kids TV),information
+56,채널 J(Channel J),culture
+57,채널W(Channel W),culture
+58,차이나원(CHINA1),information
+59,북티비(book TV),information
+60,RTV,information
+61,복지TV,culture
+62,JBS(일자리방송),information
+63,채널큐피드(channelQupid),information
+64,국회방송(NATV),information
+65,미드나잇채널,adult
+66,오픈스토리(OPEN STORY),information
+67,비키(VIKI),adult
+68,트렌디(TRENDY),fun
+69,한국낚시방송(FS-TV Fishing TV),fishing
+70,스카이에이앤씨(Sky A&C),culture
+71,스카이펫파크(Sky Petpark),information
+72,한국직업방송(WorkTV),information
+73,부동산경제TV,information
+74,패션앤(FashionN),woman
+75,롯데홈쇼핑,homeshopping
+76,한방건강TV,information
+77,마이 펫 티비(My Pet TV),information
+78,소상공인방송(yestv),information
+79,아리랑TV,culture
+80,CBS TV,religion
+81,더 무비(THE MOVIE),movie
+82,이데일리TV,information
+83,스카이스포츠(SkySports),sports
+84,토마토티브이(tomatoTV),information
+85,스카이원(SkyOne),variety
+86,스카이아이시티(SkyICT),information
+87,스카이트래블(SkyTravel),culture
+88,스카이엔터(SkyENT),variety
+89,스카이드라마(SkyDrama),fun
+90,키즈톡톡(KidsTalkTalk),information
+91,ch. PH,movie
+92,웨딩TV,information
+93,QTV,variety
+94,Golf Channel Korea,sports
+95,IB SPORTS,sports
+96,와이티엔웨더 (YTN weather),information
+97,사이언스TV(SCIENCE TV),information
+98,가요티비(가요TV),music
+99,오비에스 더블유(OBS W),culture
+100,엠비씨넷(MBCNET),information
+101,폴라리스TV,information
+102,제이박스(JBOX),drama
+103,에이엑스앤(AXN),fun
+104,씨비엔(CBN),information
+105,채널 해피독(CH Happy Dog),information
+106,서울경제TV(SEN),information
+107,JEI 재능TV(JEI TV),animation
+108,JEI EnglishTV,education
+109,와이스타(Ystar),culture
+110,코미디TV,fun
+111,라이프엔(LifeN),information
+112,더 드라마(the Drama),drama
+113,드라맥스(DramaX),drama
+114,생활체육티브이(Life Sports TV),sports
+115,정철영어TV,education
+116,에스에스증권방송(SSstockTV),information
+117,New 환경TV(Eco-TV),information
+118,아시아경제팍스TV(Asia Business Daily PAXTV),information
+119,스카이유에이치디(SkyUHD),information
+120,씨엔티브이(CNTV),fun
+121,엠비씨스포츠플러스(MBC SPORTS +),sports
+122,비욘드동아(BEYOND DONGA),information
+123,SBSGOLF,sports
+124,CatchOn,movie
+125,Catch On plus,movie
+126,Catch on Demand,fun
+127,ongamenet,fun
+128,엠넷(Mnet),music
+129,티비엔(tvN)(TVN),drama
+130,KM,music
+131,C채널(C Channel),religion
+132,실버아이,oldman
+133,에치피비에스(HPBS),information
+134,FOXlife,drama
+135,FX,drama
+136,폭스채널(FOX채널),drama
+137,씨브이오디플러스(CVOD PLUS),movie
+138,씨브이오디(CVOD),fun
+139,극동방송TV(FEBC TV),religion
+140,SBS CNBC,information
+141,스포티비게임즈(SPOTV. GAMES),fun
+142,에프티브이(FTV),fishing
+143,NOLL TV,information
+144,뷰(View),culture
+145,드라마큐브(Dramacube),drama
+146,무협티브이(무협TV),drama
+147,산업방송티브이(Ch-i),information
+148,다큐스토리(DocuStory),culture
+149,오앤티(ONT),culture
+150,드라마H,fun
+151,스포티비 (SPOTV),sports
+152,스포티비 2(SPOTV 2),sports
+153,헬스메디TV(Health Medi tv),information
+154,스포티비플러스(SPOTV+),sports
+155,"채널칭(Channel Ching, 請)",drama
+156,키즈원(kids1),education
+157,홈스토리 (Homestory),woman
+158,푸드티비(Food TV),culture
+159,온스토리(ON STORY),animation
+160,유맥스(U-max),information
+161,리빙TV,culture
+162,마운틴티브이(mountain TV),culture
+163,펀티브이(FUN TV),fun
+164,EDGE TV,culture
+165,우리채널,information
+166,씨지엔티비(CGNTV),religion
+167,GOODTV,religion
+168,지방자치문화콘텐츠티브이,information
+169,EBS u(이비에스 유),education
+170,EBS English,education
+171,애니맥스 플러스(Animax+),animation
+172,지비에스(GBS),religion
+173,티엘씨코리아(TLC Korea),culture
+174,히어로액션(Hero Action),movie
+175,에프티엔(FTN),culture
+176,홈앤쇼핑,homeshopping
+177,유교방송,religion
+178,에스티엔 스포츠(STN SPORTS),sports
+179,에스트리 (S.tree),culture
+180,티비즈(Tvis),culture
+181,어린이TV,animation
+182,NCN-TV,information
+183,디스커버리 채널 코리아 (Discovery Channel Korea),culture
+184,라이브스쿨(Live School),education
+185,사회안전방송(SafeTV),information
+186,디즈니 주니어(Disney Junior),animation
+187,디즈니 채널(Disney Channel),animation
+188,한국경제TV DMB,information
+189,한국당구방송(KBNTV),sports
+190,한국청소년방송(YBS),education
+191,GS SHOP,homeshopping
+192,케이넷티브이(K-NET TV),information
+193,인디필름(Indie Film),movie
+194,카니발 TV(Carnival TV),culture
+195,한국승마TV(Korea horseback riding TV),sports
+196,무비엔티비,movie
+197,다이어트TV(DIET TV),woman
+198,쿠키건강TV (KukiHealthTV),health
+199,불교방송(BBS),religion
+200,여행TV(Travel TV),information
+201,KonTV,information
+202,잡티브이(JOBTV),education
+203,북스티브이(BooksTV),refinement
+204,와이즈티비(WISE TV),culture
+205,보훈복지방송(PBN),information
+206,GCN,religion
+207,NS홈쇼핑,homeshopping
+208,큐비에스플러스(QBS+),culture
+209,홈초이스브이오디페이퍼뷰(Home Choice VOD PPV),movie
+210,홈초이스브이오디플러스(Home Choice VOD plus),fun
+211,홈초이스브이오디(Home Choice VOD),movie
+212,한국실버방송,information
+213,파워오토(Power Auto),information
+214,소비자TV,information
+215,애니맥스,animation
+216,푸드엔(FOOD N),health
+217,에스알씨(SRC),fun
+218,브이티브이(VTV),music
+219,Law TV,information
+220,비즈니스앤(Business&),information
+221,애니박스(ANIBOX),animation
+222,부동산경제TV,information
+223,아이채널,education
+224,비타민티비,health
+225,스타무비(Star Movie),movie
+226,이북오도티브이(이북오도TV),culture
+227,STB 상생방송,religion
+228,스페이스툰(Spacetoon),animation
+229,챔프(Champ),animation
+230,티비에스 티브이(tbs TV),information
+231,J Golf,sports
+232,브레인TV,fun
+233,CRTV,information
+234,애니플러스(ANIPLUS),animation
+235,채널 M,movie
+236,럭셔리TV(LUXURY-TV),information
+237,LIFE TV(라이프 티브이),information
+238,웰빙TV(Well-being Tv),health
+239,LIFE다큐(라이프다큐),culture
+240,KTV 국민방송 (Korea TV),culture
+241,허니TV,movie
+242,CMC가족오락TV,fun
+243,육아방송(Korea Childcare Broadcasting),education
+244,VillageTV,information
+245,학원TV,education
+246,텔레노벨라(Telenovela),drama
+247,CTN,culture
+248,KIDS-TV,education
+249,POP-TV,music
+250,AsiaN,drama
+251,I.NET,fun
+252,평화방송TV(케이블TV)/SKY-평화(위성방송),religion
+253,haoTV,culture
+254,cinemaTV,movie
+255,생활건강TV,health
+256,이벤트TV,information
+257,불교TV,religion
+258,한국경제TV,information
+259,EBS플러스2중학/직업,education
+260,EBS플러스1수능전문,education
+261,육아TV,education
+262,여행레저TV,culture
+263,GTV,woman
+264,BCN,movie
+265,게임티브이(GameTV),fun
+266,애니원(AniOne),animation
+267,ABS농어민방송,culture
+268,OSB드라마,drama
+269,한국바둑방송 (K-BadukTV),culture
+270,obc드림TV,information
+271,KCN무협채널,movie
+272,메디컬 TV(MEDICAL TV),health
+273,예술TV Arte(예술티비 아르떼),culture
+274,MTN(MoneyToday Network),information
