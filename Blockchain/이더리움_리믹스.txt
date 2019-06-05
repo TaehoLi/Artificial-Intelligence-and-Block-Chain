@@ -1,0 +1,88 @@
+pragma solidity >= 0.4.22 < 0.6.0;
+
+contract Hanyangcoin{
+    string public name;
+    string public symbol;
+    uint8 public decimals;
+    uint256 public totalSupply;
+    address public owner;
+    uint256 public onetokenprice;
+    
+    mapping (address => uint256) private balances;
+    mapping (address => int8) public blacklist;
+    
+    event Transfer(address from, address to, uint256 value);
+    event exchange(address from, uint256 balance);
+    
+    constructor(string _name, string _symbol, uint8 _decimals, uint256 _totalSupply, uint256 _onetokenprice) public {
+        name = _name;
+        symbol = _symbol;
+        decimals = _decimals;
+        totalSupply = _totalSupply;
+        owner = msg.sender;
+        onetokenprice = _onetokenprice;
+    }
+    
+    modifier isowner(){
+        if (msg.sender == owner){
+            _;
+        }
+    }
+    
+    function() payable public {
+        uint256 amount = msg.value * onetokenprice;
+        totalSupply = totalSupply + amount;
+        
+        balances[msg.sender] += amount;
+        
+        owner.transfer(msg.value);
+        emit exchange(msg.sender, balances[msg.sender]);
+    }
+    
+    function _totalSupply() public view isowner returns(uint256){
+        return totalSupply;
+    }
+    
+    function _transfer(address to, uint256 value) public returns(bool){
+        if (balances[msg.sender] >= value && value > 0) {
+            balances[msg.sender] -= value;
+            balances[to] += value;
+            emit Transfer(msg.sender, to, value); //emit: to see log of events
+            return true;
+        }
+        else {return false;}
+    }
+    
+    function checkbalance() public view returns(uint256){
+        return balances[msg.sender];
+    }
+    
+    function RegisterBlacklist(address person) public isowner{
+        blacklist[person] += 1;
+    }
+    
+    function DeleteBlacklist(address person) public isowner{
+        blacklist[person] += -1;
+    }
+    
+    function checkBlacklist() public view returns (int8){
+        return blacklist[msg.sender];
+    }
+    
+    function transferExceptBlacklist(address to, uint256 value) public returns(bool){
+        require(balances[msg.sender] >= value && value > 0, "error: can't transfer");
+        
+        if (blacklist[msg.sender] <= 0){
+            balances[msg.sender] -= value;
+            balances[to] += value;
+            emit Transfer(msg.sender, to, value);
+            return true;
+        }
+        else {return false;}
+    }
+    
+    function close() public{
+        if (msg.sender != owner) revert();
+        selfdestruct(owner);
+    }
+}
