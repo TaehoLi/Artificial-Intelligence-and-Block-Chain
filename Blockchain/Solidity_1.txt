@@ -1,0 +1,156 @@
+pragma solidity >= 0.4.22 < 0.6.0;
+
+contract Hyundai{
+    
+    string public unit;
+    string public symbol;
+    uint8 public decimals;
+    
+    uint256 private totalSupply;
+    uint256 public onetokenprice;
+    
+    address public owner;
+
+    mapping (address => uint256) private balance;
+    mapping (address => int8) private blacklist;
+    
+    event Transfer(address from, address to, uint256 value);
+    event exchange(address from, uint256 balance);
+    event Aborted();
+    event PurchaseConfirmed(address from, address to);
+    event ItemReceived(address from, address to);
+    
+    constructor(string _unit, string _symbol, uint8 _decimals, uint256 _totalSupply, uint256 _onetokenprice) public {
+        unit = _unit;
+        symbol = _symbol;
+        decimals = _decimals;
+        totalSupply = _totalSupply;
+        owner = msg.sender;
+        onetokenprice = _onetokenprice;
+    }
+    
+    modifier isOwner(){
+        require(msg.sender == owner);
+        _;
+    }
+    
+    function () payable public {
+        uint256 amount = msg.value * onetokenprice;
+        totalSupply = totalSupply + amount;
+        balance[msg.sender] += amount;
+        owner.transfer(msg.value);
+        emit exchange(msg.sender, balance[msg.sender]);
+    }
+    
+    function _totalSupply() public view isOwner returns(uint256){
+        return totalSupply;
+    }
+    
+    function _transfer(address to, uint256 value) public returns(bool){
+        require(blacklist[msg.sender] <= 0, "You're in blacklist!");
+        
+        if (balance[msg.sender] >= value && value > 0){
+            balance[msg.sender] -= value;
+            balance[to] += value;
+            emit Transfer(owner, to, value); //emit: to see log of events
+            return true;
+        }
+        else {return false;}
+    }
+    
+    function checkbalance() public view returns(uint256){
+        return balance[msg.sender];
+    }
+    
+    function RegisterBlacklist(address person) public isOwner{
+        blacklist[person] += 1;
+    }
+    
+    function DeleteBlacklist(address person) public isOwner{
+        blacklist[person] += -1;
+    }
+    
+    function checkBlacklist(address person) public view returns (int8){
+        return blacklist[person];
+    }
+    
+    function close() public{
+        if (msg.sender != owner) revert();
+        selfdestruct(owner);
+    }
+}
+
+contract Buyer{
+    
+    string public unit;
+    string public symbol;
+    uint8 public decimals;
+    
+    uint256 public totalSupply;
+    uint256 public onetokenprice;
+    
+    address public buyer;
+
+    mapping (address => uint256) private balance;
+    mapping (address => int8) private blacklist;
+    
+    event Transfer(address from, address to, uint256 value);
+    event exchange(address from, uint256 balance);
+    event Aborted();
+    event PurchaseConfirmed(address from, address to);
+    event ItemReceived(address from, address to);
+    
+    constructor(string _unit, string _symbol, uint8 _decimals, uint256 _totalSupply, uint256 _onetokenprice) public {
+        unit = _unit;
+        symbol = _symbol;
+        decimals = _decimals;
+        totalSupply = _totalSupply;
+        buyer = msg.sender;
+        onetokenprice = _onetokenprice;
+    }
+    
+    modifier isBuyer(){
+        require(msg.sender == buyer);
+        _;
+    }
+    
+    function () payable public {
+        uint256 amount = msg.value * onetokenprice;
+        totalSupply = totalSupply + amount;
+        balance[msg.sender] += amount;
+        buyer.transfer(msg.value);
+        emit exchange(msg.sender, balance[msg.sender]);
+    }
+    
+    //function _totalSupply() public view isBuyer returns(uint256){
+    //    return totalSupply;
+    //}
+    
+    function _transfer(address to, uint256 value) public returns(bool){
+        require(blacklist[msg.sender] <= 0, "You're in blacklist!");
+        
+        if (msg.sender == buyer){
+            if (balance[msg.sender] >= value && value > 0){
+                balance[msg.sender] -= value;
+                balance[to] += value;
+                totalSupply -= value;
+                emit Transfer(buyer, to, value); //emit: to see log of events
+                return true;
+            }
+            else {return false;}
+        }
+    }
+    
+    function checkbalance() public view returns(uint256){
+        return balance[msg.sender];
+    }
+    
+    function checkBlacklist(address person) public view returns (int8){
+        return blacklist[person];
+    }
+    
+    function close() public{
+        if (msg.sender != buyer) revert();
+        selfdestruct(buyer);
+    }
+}
