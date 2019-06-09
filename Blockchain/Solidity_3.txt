@@ -1,0 +1,327 @@
+pragma solidity >= 0.4.22 < 0.6.0;
+
+contract Hyundai{
+    
+    uint32 public car_num;
+    uint32 public price1;
+    enum State { Created, Locked, Inactive }
+    State public state;
+    
+    string public unit;
+    string public symbol;
+    uint8 public decimals;
+    
+    uint256 private totalSupply;
+    uint256 public onetokenprice;
+    
+    address public owner;
+    address public seller;
+    address public buyer;
+
+    uint32 public totalreginumber;     //중고차 등록 넘버
+    uint32 public totalmembernumber;   //회원번호용 변수
+    uint8 public i;                   //거래 완료 후 중고차 등록 넘버 제거용 변수
+    
+    //회원 변수(구조체) 선언
+    struct member{
+        address add;        //회원의 주소
+        uint32 memnum;     //회원 번호
+        uint[] reginumber;  //보유한 중고차의 등록넘버(여러개 가능)
+        string Nickname;
+        string phonenumber; //컨택할 때 필요(?)
+        
+    }
+    mapping (address => member) public members;
+    
+    //정보 변수(구조체) 선언, 변수가 많아서 나눠 선언
+    struct CarInformation{
+        //Car Information
+        string Name;  
+        string Model;
+        uint32 distance; //주행거리
+        uint32 price;    //중고차 가격
+        string Ownername;
+        address Owneradd;   //Owneradd는 address 타입
+        uint32 Number;  //중고차등록번호
+    }
+    struct CarInformationDetail{
+        //Inspection Information
+        string ARD;    //Automobile Registraion Date
+        string Motor;  // ex)이상 건수 1건
+        string Brake;
+        string VIN;    //차량 식별번호
+        string VRN;    //차량번호
+    }
+    
+    mapping (uint32 => CarInformation) public CarInformations;
+    mapping (uint32 => CarInformationDetail) public CarInformationDetatails;
+    
+    mapping (address => uint256) private balance;
+    mapping (address => int8) private blacklist;
+    
+    
+    
+    
+    
+    
+    event Transfer(address from, address to, uint256 value);
+    event exchange(address from, uint256 balance);
+    event Aborted();
+    event Initialized();
+    event PurchaseConfirmed(address from, address to, uint32 num);
+    event ItemReceived(address from, address to, uint32 num);
+    
+    constructor(string _unit, string _symbol, uint8 _decimals, uint256 _totalSupply, uint256 _onetokenprice) public {
+        unit = _unit;
+        symbol = _symbol;
+        decimals = _decimals;
+        totalSupply = _totalSupply;
+        owner = msg.sender;
+        onetokenprice = _onetokenprice;
+    }
+    
+    modifier isOwner(){
+        require(msg.sender == owner);
+        _;
+    }
+    modifier onlyBuyer() {
+        require(msg.sender == buyer);
+        _;
+    }
+    modifier onlySeller() {
+        require(msg.sender == seller);
+        _;
+    }
+    modifier inState(State _state) {
+        require(state == _state);
+        _;
+    }
+    
+    
+    function () payable public {
+        uint256 amount = msg.value * onetokenprice;
+        totalSupply = totalSupply + amount;
+        balance[msg.sender] += amount;
+        owner.transfer(msg.value);
+        emit exchange(msg.sender, balance[msg.sender]);
+    }
+    
+    function _totalSupply() public view isOwner returns(uint256){
+        return totalSupply;
+    }
+    
+    //현사용자->회원 송금
+    function _transfer(address to, uint256 value) public returns(bool){
+        require(blacklist[msg.sender] <= 0, "You're in blacklist!");
+        
+        if (balance[msg.sender] >= value && value > 0){
+            balance[msg.sender] -= value;
+            balance[to] += value;
+            emit Transfer(msg.sender, to, value); //emit: to see log of events
+            return true;
+        }
+        else {return false;}
+    }
+    
+    //배포자->회원 송금
+    function _Htransfer(address to, uint256 value) public isOwner returns(bool){
+        if (balance[owner] >= value && value > 0){
+            balance[owner] -= value;
+            balance[to] += value;
+            emit Transfer(owner, to, value); //emit: to see log of events
+            return true;
+        }
+        else {return false;}
+    }
+    
+    function checkbalance() public view returns(uint256){
+        return balance[msg.sender];
+    }
+    
+    function RegisterBlacklist(address person) public isOwner{
+        blacklist[person] += 1;
+    }
+    
+    function DeleteBlacklist(address person) public isOwner{
+        blacklist[person] += -1;
+    }
+    
+    function checkBlacklist(address person) public view returns (int8){
+        return blacklist[person];
+    }
+    
+    function close() public{
+        if (msg.sender != owner) revert();
+        selfdestruct(owner);
+    } ///여기까지 기본 펑션
+    
+    
+    
+    //핸드폰 번호 입력 및 sender의 주소값 저장
+    function regimemberme(string _Nickname, string _phonenumber) public {
+        totalmembernumber++;
+        members[msg.sender].add = msg.sender;
+        members[msg.sender].memnum = totalmembernumber;
+        members[msg.sender].Nickname = _Nickname;
+        members[msg.sender].phonenumber = _phonenumber;
+    }
+    
+    function getmyinform() public view returns(uint32, address, string, string){
+        return (members[msg.sender].memnum, msg.sender, members[msg.sender].Nickname, members[msg.sender].phonenumber);
+    }
+    
+    function getmemberinform(address _whoadd) public view returns(uint32, address, string, string){
+        return (members[_whoadd].memnum, _whoadd, members[_whoadd].Nickname, members[_whoadd].phonenumber);
+    }
+    
+    //생성한 struct에 정보 입력, Owner와 Number는 input 받지 않음
+    function SetCarInformaion(string _Name, string _Model, uint32 _distance, uint32 _price) public{
+        totalreginumber++;
+        CarInformations[totalreginumber].Name = _Name;
+        CarInformations[totalreginumber].Model = _Model;
+        CarInformations[totalreginumber].distance = _distance;
+        CarInformations[totalreginumber].price = _price;    //price == 0 이면 파는 상태가 아님을 뜻함
+        CarInformations[totalreginumber].Ownername = members[msg.sender].Nickname;
+        CarInformations[totalreginumber].Owneradd = members[msg.sender].add;
+        seller = CarInformations[totalreginumber].Owneradd;
+        
+        CarInformations[totalreginumber].Number = totalreginumber;
+        
+        members[msg.sender].reginumber.push(totalreginumber);   //회원이 보유한 중고차 등록넘버 저장(여러개 가능)
+        
+        //판매자->배포자 거래 수수료 지급
+        _transfer(owner, 100000);   //10만원~70만원 사이 상대값이 아닌 절대값으로 받는다고 함
+        
+    }   
+    function SetCarInformaionDetail(string _ARD, string _Motor, string _Brake, string _VIN, string _VRN) public{
+        CarInformationDetatails[totalreginumber].ARD = _ARD;
+        CarInformationDetatails[totalreginumber].Motor = _Motor;
+        CarInformationDetatails[totalreginumber].Brake = _Brake;
+        CarInformationDetatails[totalreginumber].VIN = _VIN;
+        CarInformationDetatails[totalreginumber].VRN = _VRN;
+     }
+     //가격만 바꾸는 함수
+     function changeprice(uint32 _reginumber, uint32 _price) public returns(bool){
+        if(CarInformations[_reginumber].Owneradd == msg.sender){
+        CarInformations[_reginumber].price = _price;
+        return true;
+        }
+        else { return false; }
+     }
+    
+    
+    
+    //생성한 struct의 정보 출력, _number는 중고차 등록번호     
+    function GetCarInformaion(uint32 _reginumber) public view returns(string GetName, string GetModel, uint32 Getdistance, uint32 Getprice, string GetOwnername, address GetOwneradd, uint32 GetNumber){
+        GetName = CarInformations[_reginumber].Name;
+        GetModel = CarInformations[_reginumber].Model;
+        Getdistance = CarInformations[_reginumber].distance;
+        Getprice = CarInformations[_reginumber].price;
+        GetOwnername = CarInformations[_reginumber].Ownername;
+        GetOwneradd = CarInformations[_reginumber].Owneradd;
+        GetNumber = CarInformations[_reginumber].Number;
+    }
+    function GetCarInformaionDetail(uint32 _reginumber) public view returns(string GetARD, string GetMotor, string GetBrake, string GetVIN, string GetVRN){
+        GetARD = CarInformationDetatails[_reginumber].ARD;
+        GetMotor = CarInformationDetatails[_reginumber].Motor;
+        GetBrake = CarInformationDetatails[_reginumber].Brake;
+        GetVIN = CarInformationDetatails[_reginumber].VIN;
+        GetVRN = CarInformationDetatails[_reginumber].VRN;
+    }
+    
+    //소유권 변경 
+    /*
+    function OwnerChange(uint32 _reginumber, string _Nickname, address _to) public returns(bool) {
+        if(CarInformations[_reginumber].Owneradd == msg.sender){
+        CarInformations[_reginumber].Ownername = _Nickname;
+        CarInformations[_reginumber].Owneradd = _to;
+        return true;
+        }
+        else { return false; }
+    }
+    */
+    //소유권 조회
+    function OwnerCheck(uint32 _reginumber) public view returns(string, address){ 
+        return (CarInformations[_reginumber].Ownername, CarInformations[_reginumber].Owneradd);
+    }
+    
+    /*
+    /// 아주 기초적인 차량 등록 함수
+    function whoIsSeller(address person) public {
+        seller = person;
+        car_num = 1;
+        price1 = 100;
+    }
+    */
+    
+    /// 구매자로서 구매를 확정합니다.
+    /// 이 이더는 confirmReceived()가 호출 될때까지
+    /// 잠길것입니다.
+    function confirmPurchase(address to, uint32 _reginumber) //seller 주소
+        public
+        inState(State.Created)
+        payable
+    {
+        require(_reginumber == CarInformations[totalreginumber].Number, "There's no corresponding number!");
+        require(to == seller, "Wrong Seller!");
+        emit PurchaseConfirmed(msg.sender, to, _reginumber);
+        buyer = msg.sender;
+        state = State.Locked;
+    }
+    
+    /// 구매자가 아이템을 받았다고 확인.
+    /// 이것은 잠긴 이더를 풀어줄것입니다.
+    function confirmReceived(address to, uint32 _reginumber)
+        public
+        onlyBuyer
+        inState(State.Locked)
+    {
+        require(balance[buyer] >= CarInformations[totalreginumber].price, "Try to exchange first");
+        require(_reginumber == CarInformations[totalreginumber].Number, "Different number!");
+        require(to == seller, "Different Seller!");
+        emit ItemReceived(msg.sender, to, _reginumber);
+        // 먼저 상태를 변경하는 것이 중요합니다.
+        // 그렇지 않으면, `send`를 사용하며 호출된 콘트렉트는
+        // 다시 여기를 호출할 수 있기 때문입니다.
+        state = State.Inactive;
+        _transfer(seller, CarInformations[totalreginumber].price);  //금액 전송
+        
+        //소유권 변경
+        CarInformations[_reginumber].Ownername = members[msg.sender].Nickname;
+        CarInformations[_reginumber].Owneradd = members[msg.sender].add;
+        
+        //회원 정보의 중고차 등록 넘버 조절
+        members[buyer].reginumber.push(totalreginumber);
+        while(members[seller].reginumber[i]!=totalreginumber){
+            i++;
+        }
+        members[seller].reginumber[i]=0;
+        
+        //토큰 전송
+        _Htransfer(seller, 20000);
+        _Htransfer(buyer, 30000);
+        /* 토큰으로 거래했는데 우리 플랫폼 이용해줘서 고맙다고 토큰 줘버리기~*/
+        
+        
+    }
+    
+    /// 비활성화된 state 초기화
+    function initializeState() public isOwner{
+        require(state == State.Inactive);
+        emit Initialized();
+        state = State.Created;
+        CarInformations[totalreginumber].price = 0;
+    }
+    
+    /// 차량 등록 취소
+    function abort()
+        public
+        onlySeller
+        inState(State.Created)
+    {
+        emit Aborted();
+        state = State.Inactive;
+        CarInformations[totalreginumber].price = 0;
+         _Htransfer(seller, 100000);    //등록 취소 시 수수료 환불
+    }
+}

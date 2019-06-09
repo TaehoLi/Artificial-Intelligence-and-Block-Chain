@@ -1,0 +1,219 @@
+pragma solidity >= 0.4.22 < 0.6.0;
+
+contract Hyundai{
+    
+    constructor(string _unit, string _symbol, uint8 _decimals, uint256 _totalSupply, uint256 _onetokenprice) public {
+        unit = _unit;
+        symbol = _symbol;
+        decimals = _decimals;
+        totalSupply = _totalSupply;
+        owner = msg.sender;
+        onetokenprice = _onetokenprice;
+    }
+    
+    string public unit;
+    string public symbol;
+    uint8 public decimals;
+    uint256 private totalSupply;
+    uint256 public onetokenprice;
+    
+    enum State { Created, Locked, Inactive }
+    State public state;
+    
+    address public owner;
+    address public seller;
+    address public buyer;
+
+    uint8 public totalSeller;
+
+    mapping (address => uint32) private car_num;
+    mapping (address => string) private Model;
+    mapping (address => uint32) private distance;
+    mapping (address => uint32) private price;
+    mapping (address => string) private Ownername;
+    mapping (address => address) private Owneraddress;
+    mapping (address => string) private Ownerphone;
+    
+    mapping (address => string) private ARD;
+    mapping (address => string) private Motor;
+    mapping (address => string) private Brake;
+    mapping (address => string) private VIN;
+    mapping (address => string) private VRN;
+
+    mapping (address => uint256) private balance;
+    mapping (address => int8) private blacklist;
+    
+    event Transfer(address from, address to, uint256 value);
+    event exchange(address from, uint256 balance);
+    event Aborted();
+    event Canceled();
+    event Initialized();
+    event PurchaseConfirmed(address from, address to, uint32 num);
+    event ItemReceived(address from, address to, uint32 num);
+    
+    
+    modifier isOwner(){
+        require(msg.sender == owner);
+        _;
+    }
+    modifier onlyBuyer() {
+        require(msg.sender == buyer);
+        _;
+    }
+    modifier onlySeller() {
+        require(msg.sender == seller);
+        _;
+    }
+    modifier inState(State _state) {
+        require(state == _state);
+        _;
+    }
+    
+    
+    function () payable public {
+        uint256 amount = msg.value * onetokenprice;
+        totalSupply = totalSupply + amount;
+        balance[msg.sender] += amount;
+        owner.transfer(msg.value);
+        emit exchange(msg.sender, balance[msg.sender]);
+    }
+    
+    function _totalSupply() public view isOwner returns(uint256){
+        return totalSupply;
+    }
+    
+    //송금
+    function _transfer(address to, uint256 value) public returns(bool){
+        require(blacklist[msg.sender] <= 0, "You're in blacklist!");
+        
+        if (balance[msg.sender] >= value && value > 0){
+            balance[msg.sender] -= value;
+            balance[to] += value;
+            emit Transfer(msg.sender, to, value); //emit: to see log of events
+            return true;
+        }
+        else {return false;}
+    }
+    
+    function checkbalance() public view returns(uint256){
+        return balance[msg.sender];
+    }
+    
+    function RegisterBlacklist(address person) public isOwner{
+        blacklist[person] += 1;
+    }
+    
+    function DeleteBlacklist(address person) public isOwner{
+        blacklist[person] += -1;
+    }
+    
+    function checkBlacklist(address person) public view returns (int8){
+        return blacklist[person];
+    }
+    
+    function close() public{
+        if (msg.sender != owner) revert();
+        selfdestruct(owner);
+    }
+    
+    function iAmSeller(string _Ownername, string _phonenumber, uint32 _num,
+    string _Model, uint32 _distance, uint32 _price,
+    string _ARD, string _Motor, string _Brake, string _VIN, string _VRN) public {
+        seller = msg.sender;
+        totalSeller++;
+        
+        Owneraddress[msg.sender] = seller;
+        Ownername[msg.sender] = _Ownername;
+        Ownerphone[msg.sender] = _phonenumber;
+
+        car_num[msg.sender] = _num;
+        Model[msg.sender] = _Model;
+        distance[msg.sender] = _distance;
+        price[msg.sender] = _price;
+
+        ARD[msg.sender] = _ARD;
+        Motor[msg.sender] = _Motor;
+        Brake[msg.sender] = _Brake;
+        VIN[msg.sender] = _VIN;
+        VRN[msg.sender] = _VRN;
+    }
+    
+    
+    function getinfo() public view returns(address, string, string, uint32, uint32){
+        return (Owneraddress[seller], Ownername[seller], Ownerphone[seller], car_num[seller], price[seller]);
+    }
+    
+    
+    /// 구매자로서 구매를 확정합니다.
+    /// 이 이더는 confirmReceived()가 호출 될때까지
+    /// 잠길것입니다.
+    function confirmPurchase(address to, uint32 num)
+        public
+        inState(State.Created)
+        payable
+    {
+        require(num == car_num[to], "There's no corresponding car number!");
+        require(to == seller, "Wrong Seller!");
+        emit PurchaseConfirmed(msg.sender, to, num);
+        buyer = msg.sender;
+        state = State.Locked;
+    }
+    
+    /// 구매자가 아이템을 받았다고 확인.
+    /// 이것은 잠긴 이더를 풀어줄것입니다.
+    function confirmReceived(address to, uint32 num)
+        public
+        onlyBuyer
+        inState(State.Locked)
+    {
+        require(balance[buyer] >= price[to], "Try to exchange first");
+        require(num == car_num[to], "Different number!");
+        require(to == seller, "Different Seller!");
+        emit ItemReceived(msg.sender, to, num);
+        // 먼저 상태를 변경하는 것이 중요합니다.
+        // 그렇지 않으면, `send`를 사용하며 호출된 콘트렉트는
+        // 다시 여기를 호출할 수 있기 때문입니다.
+        state = State.Inactive;
+        _transfer(seller, price[to]);  //금액 전송
+    }
+    
+    /// 비활성화된 state 초기화
+    function initializeState() public {
+        require(state == State.Inactive);
+        emit Initialized();
+        state = State.Created;
+        
+        //Owneraddress[seller] = 0;
+        Ownername[seller] = "None";
+        Ownerphone[seller] = "0";
+        //car_num[seller] = 0;
+        price[seller] = 0;
+        
+        //Model[seller] = "None";
+        //distance[seller] = 0;
+        //ARD[seller] = "0";
+        //Motor[seller] = "0";
+        //Brake[seller] = "0";
+        //VIN[seller] = "0";
+        //VRN[seller] = "0";
+    }
+    
+    /// 차량 등록 취소
+    function abort()
+        public
+        onlySeller
+        inState(State.Created)
+    {
+        emit Aborted();
+        state = State.Inactive;
+    }
+    
+    function cancel()
+        public
+        onlyBuyer
+        inState(State.Locked)
+    {
+        emit Canceled();
+        state = State.Created;
+    }
+}
